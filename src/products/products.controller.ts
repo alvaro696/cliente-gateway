@@ -3,6 +3,8 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { NATS_SERVICE } from 'src/config/services';
 import { ClientProxy } from '@nestjs/microservices';
+import { catchError } from 'rxjs';
+import { error } from 'console';
 
 @Controller('products')
 export class ProductsController {
@@ -19,6 +21,12 @@ export class ProductsController {
   @Get()
   findAll() {
     return this.client.send("findAllProducts", {})
+    .pipe(
+      catchError(error =>{
+        console.log(error)
+        throw new Error("an error happened")
+      })
+    )
   }
 
   @Get(':id')
